@@ -1,7 +1,9 @@
+import os
+
 from passlib.context import CryptContext
 from jose import jwt
 
-SECRET_KEY = "CHANGE_THIS_LATER"
+SECRET_KEY = os.getenv("MEDASSIST_SECRET_KEY", "CHANGE_THIS_SECRET_IN_PRODUCTION")
 ALGORITHM = "HS256"
 pwd_context = CryptContext(
     schemes=["bcrypt"],

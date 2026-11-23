@@ -1,22 +1,24 @@
+import os
+
 import mysql.connector
 from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends
+from fastapi import Depends, HTTPException
 from jose import jwt, JWTError
 from app.auth import SECRET_KEY, ALGORITHM
-from fastapi import FastAPI, UploadFile, File, HTTPException
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/auth/token"
 )
-def get_connection():
-    connection = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="9717106487",
-        database="medassist"
-    )
 
-    return connection
+
+def get_connection():
+    return mysql.connector.connect(
+        host=os.getenv("DB_HOST", "localhost"),
+        port=int(os.getenv("DB_PORT", "3306")),
+        user=os.getenv("DB_USER", "root"),
+        password=os.getenv("DB_PASSWORD", ""),
+        database=os.getenv("DB_NAME", "medassist"),
+    )
 
 def create_user(name, email, password_hash):
     connection = get_connection()

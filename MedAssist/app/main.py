@@ -1,27 +1,23 @@
 
-
 from pydantic import BaseModel
 from app.llm import generate_answer
-
 from fastapi.security import OAuth2PasswordRequestForm
 from app.retrieval import retrieve_user_chunks, index_document
-
-
 from app.database import get_documents_by_user, create_document, create_user, get_current_user, get_user_by_email
-from app.auth import hash_password
 from app.auth import (
+    hash_password,
     verify_password,
     create_access_token
 )
-
 from fastapi import FastAPI, UploadFile, File, HTTPException, Depends
 from app.pdf_utils import extract_text_from_pdf
-
-from jose import jwt, JWTError
-
 import time
 
-app = FastAPI()
+app = FastAPI(
+    title="MedAssist",
+    description="RAG-powered medical document question answering API.",
+    version="1.0.0",
+)
 
 
 class ChatRequest(BaseModel):
@@ -149,10 +145,17 @@ async def upload_document(
     file: UploadFile = File(...),
     user_id: int = Depends(get_current_user)
 ):
-    
+    if file.content_type != "application/pdf":
+        raise HTTPException(status_code=400, detail="Only PDF files are supported")
+
     file_bytes = await file.read()
 
     text = extract_text_from_pdf(file_bytes)
+    if not text.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="No readable text was found in the PDF",
+        )
 
     document_id = create_document(
         user_id,

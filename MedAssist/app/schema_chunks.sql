@@ -1,4 +1,4 @@
--- Run once against the `medassist` database
+-- Run once against the configured MySQL database.
 CREATE TABLE IF NOT EXISTS document_chunks (
     id INT AUTO_INCREMENT PRIMARY KEY,
     document_id INT NOT NULL,
