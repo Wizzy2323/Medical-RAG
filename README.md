@@ -1,4 +1,4 @@
-# MedAssist - Medical Document Q&A using RAG
+# Medical-RAG - Medical Document Q&A using RAG
 
 MedAssist is a FastAPI-based retrieval-augmented generation application that answers questions from user-uploaded medical PDFs. It combines PDF text extraction, semantic chunk retrieval with FAISS, and a local Ollama language model.
 
